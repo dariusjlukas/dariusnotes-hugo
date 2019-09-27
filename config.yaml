@@ -1,0 +1,7 @@
+baseURL: https://dariusnotes.com/
+languageCode: en-us
+title: Darius Notes
+theme: book
+disableKinds: ['taxonomy', 'taxonomyTerm']
+params:
+  BookMenuBundle: /menu

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docs on Darius Notes</title>
+    <link>https://dariusnotes.com/docs/</link>
+    <description>Recent content in Docs on Darius Notes</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="https://dariusnotes.com/docs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://dariusnotes.com/docs/introduction/shortcodes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dariusnotes.com/docs/introduction/shortcodes/</guid>
+      <description>Shortcodes Expand shortcode Default {{&amp;lt; expand &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}   Expand ↕  Markdown content Lorem markdownum insigne&amp;hellip;    With Custom Label {{&amp;lt; expand &amp;quot;Custom Label&amp;quot; &amp;quot;...&amp;quot; &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}   Custom Label ...  Markdown content Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat stringit, frustra Saturnius uteroque inter!</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link></link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid></guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>one</title>
+      <link>https://dariusnotes.com/docs/new/one/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://dariusnotes.com/docs/new/one/</guid>
+      <description>Here is a one-page summary of typesetting and shortcodes. This is a new section Hello
+ What happens when I tab over 4 times? I guess this? git submodule deinit _site git rm _site git submodule add -b gh-pages git@github.com:your-username/your-repo.git public  Looks similar to this, except tabbed over  Also, I should be able to use cmd prompt text:
+$ Type this in a terminal {{&amp;lt; cmd &amp;quot;$ Type this in a terminal&amp;quot; &amp;gt;}}   -- .</description>
+    </item>
+    
+  </channel>
+</rss>
