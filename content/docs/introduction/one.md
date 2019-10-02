@@ -28,7 +28,7 @@ Also, I should be able to use cmd prompt text:
 ````
 
 <!-- <iframe src="https://drive.google.com/file/d/1ByYeWBc8NS7uSZFE7uvNijNIOsZiCgCp/preview" width="720" height="540"></iframe> -->
-{{< gimg "https://drive.google.com/file/d/1ByYeWBc8NS7uSZFE7uvNijNIOsZiCgCp/preview" >}}
+{{< gimg "https://drive.google.com/file/d/1ByYeWBc8NS7uSZFE7uvNijNIOsZiCgCp/preview" 720 540>}}
 
 ```tpl
 {{</* gimg "https://drive.google.com/file/d/1ByYeWBc8NS7uSZFE7uvNijNIOsZiCgCp/preview" */>}}
