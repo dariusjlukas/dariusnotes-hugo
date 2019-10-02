@@ -6,8 +6,4 @@ bookTOC: false
 
 # Home
 
-Insert shortcode here:
-
-{{< myshortcode color="Test" >}}
-
-{{< cmd "$ cd /" >}}
+{{< gimg "https://drive.google.com/file/d/1tR8U22zGljUQOB4X9gbidNrN0T-5fePA/preview" >}}

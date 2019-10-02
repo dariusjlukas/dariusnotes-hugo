@@ -2,8 +2,8 @@
 headless: true
 ---
 
-- **Reference**
-    - [one]({{< relref "/docs/New/one" >}})
-    - [Shortcodes]({{< relref "/docs/introduction/shortcodes" >}})  
+- **Site Reference**
+    - [one]({{< relref "/docs/introduction/one" >}})
+    
 
 - [**Blog**]({{< relref "/posts" >}})
