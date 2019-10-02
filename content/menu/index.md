@@ -2,10 +2,11 @@
 headless: true
 ---
 
-- **FPGA**
+- **Documentation**
+- [FPGA]({{< relref "/docs/FPGA/intro" >}})
     - [Intro]({{< relref "/docs/FPGA/intro" >}})
 
 - [**Blog**]({{< relref "/posts" >}})
 
 
-- [Site Reference]({{< relref "/docs/introduction/one" >}})
+- [*Site Reference*]({{< relref "/docs/introduction/one" >}})
