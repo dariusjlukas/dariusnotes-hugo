@@ -1,7 +1,7 @@
 ---
 title: one
 ---
-## Here is a one-page summary of typesetting and shortcodes.
+## This it a temporary page for my reference while building this site
 
 ### This is a new section
 Hello

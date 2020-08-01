@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
@@ -7,26 +7,37 @@
   </url>
   
   <url>
-    <loc>https://dariusnotes.com/posts/creating-a-new-theme/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dariusnotes.com/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://dariusnotes.com/posts/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
+    <loc>https://dariusnotes.com/docs/esp32/blink/</loc>
+    <lastmod>2020-07-31T18:26:46-04:00</lastmod>
   </url>
   
   <url>
     <loc>https://dariusnotes.com/docs/</loc>
+    <lastmod>2020-07-31T18:26:46-04:00</lastmod>
   </url>
   
   <url>
-    <loc>https://dariusnotes.com/docs/new/one/</loc>
+    <loc>https://dariusnotes.com/</loc>
+    <lastmod>2020-07-31T18:26:46-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dariusnotes.com/docs/fpga/intro/</loc>
+    <lastmod>2019-09-30T14:08:13-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dariusnotes.com/posts/first/</loc>
+    <lastmod>2019-09-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dariusnotes.com/posts/</loc>
+    <lastmod>2019-09-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://dariusnotes.com/docs/introduction/one/</loc>
   </url>
   
 </urlset>

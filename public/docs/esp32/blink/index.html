@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blink | Darius Notes</title>
+
+
+<link rel="stylesheet" href="/book.min.d6e01e122033ce2a7f4ba3471d4e045ec8f5e41dfe29688bf42ed9da10b7ef47.css" integrity="sha256-1uAeEiAzzip/S6NHHU4EXsj15B3&#43;KWiL9C7Z2hC370c=">
+
+
+<script defer src="/search.min.6ca0e3c29d451617228b50a38cfed0465e2a93af1d4a31344dcc6d560148253d.js" integrity="sha256-bKDjwp1FFhcii1CjjP7QRl4qk68dSjE0TcxtVgFIJT0="></script>
+
+
+
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="flex container">
+
+    <aside class="book-menu fixed">
+      <nav>
+<h2 class="book-brand">
+  <a href="https://dariusnotes.com/"><span>Darius Notes</span>
+  </a>
+</h2>
+
+
+<div class="book-search">
+  <input type="text" placeholder="Search" id="book-search-input" maxlength="64" readonly />
+  <div class="book-search-spinner spinner hidden"></div>
+  <ul id="book-search-results"></ul>
+</div>
+
+
+
+
+
+    
+  
+  
+  
+
+  <style>
+  nav ul a[href$="\2f docs\2f esp32\2f blink\2f "] {
+      color: #004ed0;
+  }
+  </style>
+
+<ul>
+<li>
+<p><strong>Documentation</strong></p>
+</li>
+<li>
+<p><a href="/docs/esp32/blink/">ESP32</a></p>
+<ul>
+<li><a href="/docs/esp32/blink/">Intro (Blink)</a></li>
+</ul>
+</li>
+<li>
+<p><a href="/docs/fpga/intro/">FPGA</a></p>
+<ul>
+<li><a href="/docs/fpga/intro/">Intro</a></li>
+</ul>
+</li>
+<li>
+<p><a href="/posts/"><strong>Blog</strong></a></p>
+</li>
+<li>
+<p><a href="/docs/introduction/one/"><strong>Site Reference</strong></a></p>
+</li>
+</ul>
+
+
+
+
+
+
+
+</nav>
+
+
+<script>
+(function() {
+  var menu = document.querySelector("aside.book-menu nav");
+  addEventListener("beforeunload", function(event) {
+    localStorage.setItem("menu.scrollTop", menu.scrollTop);
+  });
+  menu.scrollTop = localStorage.getItem("menu.scrollTop");
+})();
+</script>
+
+    </aside>
+
+    <div class="book-page">
+      <header class="flex align-center justify-between book-header">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" alt="Menu" />
+  </label>
+  <strong>Blink</strong>
+</header>
+
+      
+<article class="markdown"><h1 id="esp32-getting-started---blink">ESP32 Getting Started - Blink</h1>
+
+<style>
+    .ging{
+        text-align: center; 
+        width: 100%; 
+         
+    }
+</style>
+<div class = "ging">
+    <iframe id="gingi" src="https://drive.google.com/file/d/1yYD6ve40sl5sgrEQ78U8eDRd08tnLRzG/preview" width="570" height="540" style="max-width: 100%; max-height: auto; border: none"></iframe>
+</div>
+
+
+<h2 id="background">Background</h2>
+<p>The ESP32 line of modules by Espressif contain a dual-core, 32-bit processor capable of click speeds of up to 240 MHz. The module also
+includes WiFi, Bluetooth, and hardware accelerators for a variety of peripherals. Programming the ESP32 can be done via
+the Arduino IDE, Espressif&rsquo;s IDF (Integrated Development Framework), or a third-party toolchain. While the Arduino IDE is convenient, using the ESP-IDF enables the user to take full advantage of the dual-core nature of the ESP32, and of standard libraries that interact with peripherals. For these reasons, we will be using the ESP-IDF for this guide. Espressif&rsquo;s ESP-IDF documentation can be found <a target="_blank" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html">here</a>, and the documentation for FreeRTOS, the barebones, real-time operating system used by ESP-IDF, can be found
+<a target="_blank" href="https://www.freertos.org/RTOS.html">here</a>. The following guide will show you how to make an RGB LED blink periodically, taking advantage of basic FreeRTOS features and the ESP-IDF. To follow along, you will need an ESP32 development board with an RGB LED attached to pins 23, 5, and 0, however the pin assignments are easy to adjust in the code.</p>
+<h2 id="step-1-get-esp-idf">Step 1: Get ESP-IDF</h2>
+<p>Installation instructions for installing ESP-IDF on Linux, Mac, and Windows can be found <a target="_blank" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html#get-started-get-esp-idf">here</a>. Once you get to the end of this guide, you should have ESP-IDF all set up, and be able to continue on to step 2.</p>
+<h2 id="step-2-create-a-new-project">Step 2: Create a new project</h2>
+<p>ESP-IDF requires a particular directory structure in order to build projects properly. For this reason, it is often easiest to start a new project by copying an example project and modifying the main .c file. ESP-IDF comes with quite a few examples located in esp-idf/examples. For the sake of this tutorial, a template project can be found <a target="_blank" href="https://drive.google.com/file/d/1nl-vIL4I5iRtSUm5sU0COSgtcNbDChu1/view?usp=sharing">here</a>. Download the compressed project directory, unzip, and open the file blink_tutorial/main/blink.c in your favorite editor (I will be using <a target="_blank" href="https://code.visualstudio.com/">VSCode</a>) to get started.</p>
+<h2 id="step-3-include-necessary-libraries">Step 3: Include necessary libraries</h2>
+<p>A number of standard libraries must be included in order for this example to work. We will include stdio in order to have the ability to print information over the serial connection, FreeRTOS for system calls, and the gpio library to have access to the GPIO (General Purpose Input/Output) pins on the ESP32 in order to drive the LED. Add the following lines to the top of the blink.c file (blink_tutorial/main/blink.c):</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/FreeRTOS.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/task.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;driver/gpio.h&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>In addition to including libraries, we will also create macros for the RGB LED pin assignments. On the dev board I am using, the pins used are GPIO 23, GPIO 0, and GPIO 5. These values can be changed depending on how you have your board wired. For the board I am using, I would add the lines:
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">#define RED_CHANNEL 23
+</span><span style="color:#75715e">#define GREEN_CHANNEL 0
+</span><span style="color:#75715e">#define BLUE_CHANNEL 5</span></code></pre></td></tr></table>
+</div>
+</div></p>
+<p>Before we continue, we will also need to add a main function. Like most C and C++ environments, ESP-IDF uses a main function as the entry point into the program. ESP-IDF calls the function &ldquo;app_main&rdquo;. Add the following lines to your blink.c file:
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_main</span>()
+{
+
+
+}</code></pre></td></tr></table>
+</div>
+</div></p>
+<h2 id="step-4-setup-gpio-pins">Step 4: Setup GPIO pins</h2>
+<p>Before we can start using the GPIO pins, we must first configure the pins for output. The reason for this is that the ESP32 internally can use the same pin for multiple functions, so we must be explicit that these pins are intended to be used for GPIO output. The following lines will configure out previously defined red, green, and blue channels as outputs. Add them at the top of your app_main() function.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C">    gpio_pad_select_gpio(RED_CHANNEL);
+    gpio_pad_select_gpio(GREEN_CHANNEL);
+    gpio_pad_select_gpio(BLUE_CHANNEL);
+    
+    gpio_set_direction(RED_CHANNEL, GPIO_MODE_OUTPUT);
+    gpio_set_direction(GREEN_CHANNEL, GPIO_MODE_OUTPUT);
+    gpio_set_direction(BLUE_CHANNEL, GPIO_MODE_OUTPUT);</code></pre></td></tr></table>
+</div>
+</div></p>
+<h2 id="step-5-turn-the-led-on-and-off">Step 5: Turn the LED on and off</h2>
+<p>Now that the pins are configured, we can toggle them on and off in an infinite loop. Add the following while loop with the gpio_set_level() calls to toggle the pins high and low (1 and 0).
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>) {
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">0</span>);
+        
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">1</span>);
+    }</code></pre></td></tr></table>
+</div>
+</div></p>
+<h2 id="step-6-add-task-delays">Step 6: Add task delays</h2>
+<p>Currently, our program will toggle the LED on and off. The problem is, it will toggle the LED on and off as fast as it can, which is too fast for the human eye to see. In order to slow down the toggling, we will add task delays. These task delays are similar to delays in Arduino with one key difference: they only block the block the current task. This is one of the major benefits to using an RTOS like FreeRTOS, is that we can take advantage of the concept of multiple tasks running in parallel, and delay one without pausing the rest. This advantage is not particularly evident right now (since we only have one task), but is a makes more complex code much simpler. To add one second delays, add the following lines after setting the LED pins high and low:
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>) {
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">0</span>);
+<span style="display:block;width:100%;background-color:#3c3d38">        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">0</span>);
+</span>        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+        
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">1</span>);
+<span style="display:block;width:100%;background-color:#3c3d38">        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">1</span>);
+</span>        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+    }</code></pre></td></tr></table>
+</div>
+</div></p>
+<p>Notice that the vTaskDelay values are not 1000 milliseconds (1 second), but rather 1000 / portTICK_PERIOD_MS. This is because vTaskDelay() works with the concept of ticks. In order to translate tick into milliseconds, we divide the desired millisecond value by the macro portTICK_PERIOD_MS.</p>
+<h2 id="step-7-add-serial-messages">Step 7: Add serial messages</h2>
+<p>In addition to blinking the LED, we can write messages over the serial terminal when we turn the LED on and when we turn the LED off. To do so, add the following lines before setting the GPIO levels on/off.
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span></span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>) {
+<span style="display:block;width:100%;background-color:#3c3d38">	printf(<span style="color:#e6db74">&#34;Turning on the LED</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span>        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">0</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+        
+<span style="display:block;width:100%;background-color:#3c3d38">	printf(<span style="color:#e6db74">&#34;Turning off the LED</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span>        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">1</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+    }</code></pre></td></tr></table>
+</div>
+</div></p>
+<div class="book-expand">
+  <label>
+    <div class="book-expand-head flex justify-between">
+      <span>note</span>
+      <span>...</span>
+    </div>
+    <input type="checkbox" class="hidden" />
+    <div class="book-expand-content markdown-inner">
+      The &ldquo;Turning on the LED&rdquo; and &ldquo;Turning off the LED&rdquo; messages might be backwards on your setup depending on if your RGB LED is common anode or common cathode.
+    </div>
+  </label>
+</div>
+
+<p>The idf.py tool can be used to read the output of the serial terminal. On Linux, the command is: 
+<style>
+.cmd{
+    background-color: black;
+    color: rgb(53, 216, 31);
+    padding: 0.3em;
+    margin: 0.4em;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+</style>
+<div class="cmd">$ idf.py monitor</div></p>
+<h2 id="step-8-build-and-upload">Step 8: Build and upload</h2>
+<p>The basic blink example is now complete and ready to be uploaded. The complete blink.c file should look like this:
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/FreeRTOS.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/task.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;driver/gpio.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define RED_CHANNEL 23
+</span><span style="color:#75715e">#define GREEN_CHANNEL 0
+</span><span style="color:#75715e">#define BLUE_CHANNEL 5
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_main</span>()
+{
+    
+    gpio_pad_select_gpio(RED_CHANNEL);
+    gpio_pad_select_gpio(GREEN_CHANNEL);
+    gpio_pad_select_gpio(BLUE_CHANNEL);
+    
+    gpio_set_direction(RED_CHANNEL, GPIO_MODE_OUTPUT);
+    gpio_set_direction(GREEN_CHANNEL, GPIO_MODE_OUTPUT);
+    gpio_set_direction(BLUE_CHANNEL, GPIO_MODE_OUTPUT);
+
+    <span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>) {
+	printf(<span style="color:#e6db74">&#34;Turning on the LED</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">0</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">0</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+        
+	printf(<span style="color:#e6db74">&#34;Turning off the LED</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">1</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+    }
+}</code></pre></td></tr></table>
+</div>
+</div></p>
+<p>The uploading method is the same as in the ESP-IDF install guide found <a target="_blank" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/index.html#step-9-flash-onto-the-device">here</a>. On Linux, 
+<style>
+.cmd{
+    background-color: black;
+    color: rgb(53, 216, 31);
+    padding: 0.3em;
+    margin: 0.4em;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+</style>
+<div class="cmd">$ idf.py flash</div> should work.</p>
+<p>The results should be similar to what is depicted below:</p>
+<p>
+<style>
+    .ging{
+        text-align: center; 
+        width: 100%; 
+         
+    }
+</style>
+<div class = "ging">
+    <iframe id="gingi" src="https://drive.google.com/file/d/1faFyozgQywtYTJwSWdTFq3OxBRNLxGBR/preview" width="720" height="540" style="max-width: 100%; max-height: auto; border: none"></iframe>
+</div>
+
+
+
+<style>
+    .ging{
+        text-align: center; 
+        width: 100%; 
+         
+    }
+</style>
+<div class = "ging">
+    <iframe id="gingi" src="https://drive.google.com/file/d/1zSAy8nfKellqHujGjhP9NI9rnV61Wtm0/preview" width="720" height="540" style="max-width: 100%; max-height: auto; border: none"></iframe>
+</div>
+
+</p>
+<h2 id="step-9-make-it-more-interesting">Step 9: Make it more interesting</h2>
+<p>The above example simply flashes the RGB LED on and off, i.e. all channels are synchronized. A more interesting demo would be to drive each channel individually. A simple method of doing so is shown below:
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#66d9ef">while</span>(<span style="color:#ae81ff">1</span>) {
+        printf(<span style="color:#e6db74">&#34;All off</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">1</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">1</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+        
+        printf(<span style="color:#e6db74">&#34;Red channel on</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(RED_CHANNEL, <span style="color:#ae81ff">0</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+
+        printf(<span style="color:#e6db74">&#34;Green channel on</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(GREEN_CHANNEL, <span style="color:#ae81ff">0</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+
+        printf(<span style="color:#e6db74">&#34;Blue channel on</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        gpio_set_level(BLUE_CHANNEL, <span style="color:#ae81ff">0</span>);
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+    }</code></pre></td></tr></table>
+</div>
+</div></p>
+<p>I would encourage you to experiment with different combinations of the channels and different methods of controlling them.</p>
+<h2 id="step-10-hardware-led-driver">Step 10: Hardware LED Driver</h2>
+<p>If you were to actually deploy a final product that used the esp32 to drive LEDs, chances are you will want to use the built-in LED driver. The ESP32&rsquo;s hardware LED driver is capable of changing the intensity of group of LEDs and handle gradual transitions between different intensities while using minimal cpu resources. The exact workings of the LED driver are beyond the scope of this tutorial, but documentation on the LED driver can be found <a target="_blank" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/ledc.html">here</a>, and below is a copy of example code provided by Espressif that takes advantage of the LED driver. The LED driver is just one of several hardware-implimented peripheral drivers included in the ESP32. A complete list of the ESP32&rsquo;s peripherals and documentation on them can be found <a target="_blank" href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/index.html">here</a>.</p>
+<div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">161
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">162
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">163
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">164
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">165
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">166
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">167
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">168
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">169
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">170
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">171
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">172
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">173
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">174
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">175
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">176
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">177
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">178
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">179
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">180
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">181
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">182
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">183
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">184
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">185
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">186
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">187
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">188
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">189
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">190
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">191
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">192
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-C" data-lang="C"><span style="color:#75715e">/* LEDC (LED Controller) fade example
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">   This example code is in the Public Domain (or CC0 licensed, at your option.)
+</span><span style="color:#75715e">
+</span><span style="color:#75715e">   Unless required by applicable law or agreed to in writing, this
+</span><span style="color:#75715e">   software is distributed on an &#34;AS IS&#34; BASIS, WITHOUT WARRANTIES OR
+</span><span style="color:#75715e">   CONDITIONS OF ANY KIND, either express or implied.
+</span><span style="color:#75715e">*/</span>
+<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/FreeRTOS.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;freertos/task.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;driver/ledc.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;esp_err.h&#34;</span><span style="color:#75715e">
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">/*
+</span><span style="color:#75715e"> * About this example
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 1. Start with initializing LEDC module:
+</span><span style="color:#75715e"> *    a. Set the timer of LEDC first, this determines the frequency
+</span><span style="color:#75715e"> *       and resolution of PWM.
+</span><span style="color:#75715e"> *    b. Then set the LEDC channel you want to use,
+</span><span style="color:#75715e"> *       and bind with one of the timers.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 2. You need first to install a default fade function,
+</span><span style="color:#75715e"> *    then you can use fade APIs.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 3. You can also set a target duty directly without fading.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 4. This example uses GPIO18/19/4/5 as LEDC output,
+</span><span style="color:#75715e"> *    and it will change the duty repeatedly.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * 5. GPIO18/19 are from high speed channel group.
+</span><span style="color:#75715e"> *    GPIO4/5 are from low speed channel group.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> */</span>
+<span style="color:#75715e">#ifdef CONFIG_IDF_TARGET_ESP32
+</span><span style="color:#75715e">#define LEDC_HS_TIMER          LEDC_TIMER_0
+</span><span style="color:#75715e">#define LEDC_HS_MODE           LEDC_HIGH_SPEED_MODE
+</span><span style="color:#75715e">#define LEDC_HS_CH0_GPIO       (18)
+</span><span style="color:#75715e">#define LEDC_HS_CH0_CHANNEL    LEDC_CHANNEL_0
+</span><span style="color:#75715e">#define LEDC_HS_CH1_GPIO       (19)
+</span><span style="color:#75715e">#define LEDC_HS_CH1_CHANNEL    LEDC_CHANNEL_1
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e">#define LEDC_LS_TIMER          LEDC_TIMER_1
+</span><span style="color:#75715e">#define LEDC_LS_MODE           LEDC_LOW_SPEED_MODE
+</span><span style="color:#75715e">#ifdef CONFIG_IDF_TARGET_ESP32S2
+</span><span style="color:#75715e">#define LEDC_LS_CH0_GPIO       (18)
+</span><span style="color:#75715e">#define LEDC_LS_CH0_CHANNEL    LEDC_CHANNEL_0
+</span><span style="color:#75715e">#define LEDC_LS_CH1_GPIO       (19)
+</span><span style="color:#75715e">#define LEDC_LS_CH1_CHANNEL    LEDC_CHANNEL_1
+</span><span style="color:#75715e">#endif
+</span><span style="color:#75715e">#define LEDC_LS_CH2_GPIO       (4)
+</span><span style="color:#75715e">#define LEDC_LS_CH2_CHANNEL    LEDC_CHANNEL_2
+</span><span style="color:#75715e">#define LEDC_LS_CH3_GPIO       (5)
+</span><span style="color:#75715e">#define LEDC_LS_CH3_CHANNEL    LEDC_CHANNEL_3
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">#define LEDC_TEST_CH_NUM       (4)
+</span><span style="color:#75715e">#define LEDC_TEST_DUTY         (4000)
+</span><span style="color:#75715e">#define LEDC_TEST_FADE_TIME    (3000)
+</span><span style="color:#75715e"></span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">app_main</span>(<span style="color:#66d9ef">void</span>)
+{
+    <span style="color:#66d9ef">int</span> ch;
+
+    <span style="color:#75715e">/*
+</span><span style="color:#75715e">     * Prepare and set configuration of timers
+</span><span style="color:#75715e">     * that will be used by LED Controller
+</span><span style="color:#75715e">     */</span>
+    ledc_timer_config_t ledc_timer <span style="color:#f92672">=</span> {
+        .duty_resolution <span style="color:#f92672">=</span> LEDC_TIMER_13_BIT, <span style="color:#75715e">// resolution of PWM duty
+</span><span style="color:#75715e"></span>        .freq_hz <span style="color:#f92672">=</span> <span style="color:#ae81ff">5000</span>,                      <span style="color:#75715e">// frequency of PWM signal
+</span><span style="color:#75715e"></span>        .speed_mode <span style="color:#f92672">=</span> LEDC_LS_MODE,           <span style="color:#75715e">// timer mode
+</span><span style="color:#75715e"></span>        .timer_num <span style="color:#f92672">=</span> LEDC_LS_TIMER,            <span style="color:#75715e">// timer index
+</span><span style="color:#75715e"></span>        .clk_cfg <span style="color:#f92672">=</span> LEDC_AUTO_CLK,              <span style="color:#75715e">// Auto select the source clock
+</span><span style="color:#75715e"></span>    };
+    <span style="color:#75715e">// Set configuration of timer0 for high speed channels
+</span><span style="color:#75715e"></span>    ledc_timer_config(<span style="color:#f92672">&amp;</span>ledc_timer);
+<span style="color:#75715e">#ifdef CONFIG_IDF_TARGET_ESP32
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// Prepare and set configuration of timer1 for low speed channels
+</span><span style="color:#75715e"></span>    ledc_timer.speed_mode <span style="color:#f92672">=</span> LEDC_HS_MODE;
+    ledc_timer.timer_num <span style="color:#f92672">=</span> LEDC_HS_TIMER;
+    ledc_timer_config(<span style="color:#f92672">&amp;</span>ledc_timer);
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">/*
+</span><span style="color:#75715e">     * Prepare individual configuration
+</span><span style="color:#75715e">     * for each channel of LED Controller
+</span><span style="color:#75715e">     * by selecting:
+</span><span style="color:#75715e">     * - controller&#39;s channel number
+</span><span style="color:#75715e">     * - output duty cycle, set initially to 0
+</span><span style="color:#75715e">     * - GPIO number where LED is connected to
+</span><span style="color:#75715e">     * - speed mode, either high or low
+</span><span style="color:#75715e">     * - timer servicing selected channel
+</span><span style="color:#75715e">     *   Note: if different channels use one timer,
+</span><span style="color:#75715e">     *         then frequency and bit_num of these channels
+</span><span style="color:#75715e">     *         will be the same
+</span><span style="color:#75715e">     */</span>
+    ledc_channel_config_t ledc_channel[LEDC_TEST_CH_NUM] <span style="color:#f92672">=</span> {
+<span style="color:#75715e">#ifdef CONFIG_IDF_TARGET_ESP32
+</span><span style="color:#75715e"></span>        {
+            .channel    <span style="color:#f92672">=</span> LEDC_HS_CH0_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_HS_CH0_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_HS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_HS_TIMER
+        },
+        {
+            .channel    <span style="color:#f92672">=</span> LEDC_HS_CH1_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_HS_CH1_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_HS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_HS_TIMER
+        },
+<span style="color:#75715e">#elif defined CONFIG_IDF_TARGET_ESP32S2
+</span><span style="color:#75715e"></span>        {
+            .channel    <span style="color:#f92672">=</span> LEDC_LS_CH0_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_LS_CH0_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_LS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_LS_TIMER
+        },
+        {
+            .channel    <span style="color:#f92672">=</span> LEDC_LS_CH1_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_LS_CH1_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_LS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_LS_TIMER
+        },
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>        {
+            .channel    <span style="color:#f92672">=</span> LEDC_LS_CH2_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_LS_CH2_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_LS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_LS_TIMER
+        },
+        {
+            .channel    <span style="color:#f92672">=</span> LEDC_LS_CH3_CHANNEL,
+            .duty       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .gpio_num   <span style="color:#f92672">=</span> LEDC_LS_CH3_GPIO,
+            .speed_mode <span style="color:#f92672">=</span> LEDC_LS_MODE,
+            .hpoint     <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>,
+            .timer_sel  <span style="color:#f92672">=</span> LEDC_LS_TIMER
+        },
+    };
+
+    <span style="color:#75715e">// Set LED Controller with previously prepared configuration
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (ch <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ch <span style="color:#f92672">&lt;</span> LEDC_TEST_CH_NUM; ch<span style="color:#f92672">++</span>) {
+        ledc_channel_config(<span style="color:#f92672">&amp;</span>ledc_channel[ch]);
+    }
+
+    <span style="color:#75715e">// Initialize fade service.
+</span><span style="color:#75715e"></span>    ledc_fade_func_install(<span style="color:#ae81ff">0</span>);
+
+    <span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">1</span>) {
+        printf(<span style="color:#e6db74">&#34;1. LEDC fade up to duty = %d</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, LEDC_TEST_DUTY);
+        <span style="color:#66d9ef">for</span> (ch <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ch <span style="color:#f92672">&lt;</span> LEDC_TEST_CH_NUM; ch<span style="color:#f92672">++</span>) {
+            ledc_set_fade_with_time(ledc_channel[ch].speed_mode,
+                    ledc_channel[ch].channel, LEDC_TEST_DUTY, LEDC_TEST_FADE_TIME);
+            ledc_fade_start(ledc_channel[ch].speed_mode,
+                    ledc_channel[ch].channel, LEDC_FADE_NO_WAIT);
+        }
+        vTaskDelay(LEDC_TEST_FADE_TIME <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+
+        printf(<span style="color:#e6db74">&#34;2. LEDC fade down to duty = 0</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        <span style="color:#66d9ef">for</span> (ch <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ch <span style="color:#f92672">&lt;</span> LEDC_TEST_CH_NUM; ch<span style="color:#f92672">++</span>) {
+            ledc_set_fade_with_time(ledc_channel[ch].speed_mode,
+                    ledc_channel[ch].channel, <span style="color:#ae81ff">0</span>, LEDC_TEST_FADE_TIME);
+            ledc_fade_start(ledc_channel[ch].speed_mode,
+                    ledc_channel[ch].channel, LEDC_FADE_NO_WAIT);
+        }
+        vTaskDelay(LEDC_TEST_FADE_TIME <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+
+        printf(<span style="color:#e6db74">&#34;3. LEDC set duty = %d without fade</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, LEDC_TEST_DUTY);
+        <span style="color:#66d9ef">for</span> (ch <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ch <span style="color:#f92672">&lt;</span> LEDC_TEST_CH_NUM; ch<span style="color:#f92672">++</span>) {
+            ledc_set_duty(ledc_channel[ch].speed_mode, ledc_channel[ch].channel, LEDC_TEST_DUTY);
+            ledc_update_duty(ledc_channel[ch].speed_mode, ledc_channel[ch].channel);
+        }
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+
+        printf(<span style="color:#e6db74">&#34;4. LEDC set duty = 0 without fade</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+        <span style="color:#66d9ef">for</span> (ch <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ch <span style="color:#f92672">&lt;</span> LEDC_TEST_CH_NUM; ch<span style="color:#f92672">++</span>) {
+            ledc_set_duty(ledc_channel[ch].speed_mode, ledc_channel[ch].channel, <span style="color:#ae81ff">0</span>);
+            ledc_update_duty(ledc_channel[ch].speed_mode, ledc_channel[ch].channel);
+        }
+        vTaskDelay(<span style="color:#ae81ff">1000</span> <span style="color:#f92672">/</span> portTICK_PERIOD_MS);
+    }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</article>
+
+      
+
+      
+    </div>
+
+    
+  
+
+  <aside class="book-toc level-6 fixed">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#background">Background</a></li>
+    <li><a href="#step-1-get-esp-idf">Step 1: Get ESP-IDF</a></li>
+    <li><a href="#step-2-create-a-new-project">Step 2: Create a new project</a></li>
+    <li><a href="#step-3-include-necessary-libraries">Step 3: Include necessary libraries</a></li>
+    <li><a href="#step-4-setup-gpio-pins">Step 4: Setup GPIO pins</a></li>
+    <li><a href="#step-5-turn-the-led-on-and-off">Step 5: Turn the LED on and off</a></li>
+    <li><a href="#step-6-add-task-delays">Step 6: Add task delays</a></li>
+    <li><a href="#step-7-add-serial-messages">Step 7: Add serial messages</a></li>
+    <li><a href="#step-8-build-and-upload">Step 8: Build and upload</a></li>
+    <li><a href="#step-9-make-it-more-interesting">Step 9: Make it more interesting</a></li>
+    <li><a href="#step-10-hardware-led-driver">Step 10: Hardware LED Driver</a></li>
+  </ul>
+</nav>
+  </aside>
+
+
+
+  </main>
+
+  
+  
+</body>
+
+</html>

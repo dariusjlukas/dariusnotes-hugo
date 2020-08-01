@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Docs on Darius Notes</title>
@@ -6,6 +6,7 @@
     <description>Recent content in Docs on Darius Notes</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Fri, 31 Jul 2020 18:26:46 -0400</lastBuildDate>
     
 	<atom:link href="https://dariusnotes.com/docs/index.xml" rel="self" type="application/rss+xml" />
     
@@ -16,27 +17,37 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://dariusnotes.com/docs/introduction/shortcodes/</guid>
-      <description>Shortcodes Expand shortcode Default {{&amp;lt; expand &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}   Expand ↕  Markdown content Lorem markdownum insigne&amp;hellip;    With Custom Label {{&amp;lt; expand &amp;quot;Custom Label&amp;quot; &amp;quot;...&amp;quot; &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}   Custom Label ...  Markdown content Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat stringit, frustra Saturnius uteroque inter!</description>
+      <description>Shortcodes Expand shortcode Default {{&amp;lt; expand &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}  Expand ↕  Markdown content Lorem markdownum insigne&amp;hellip;    With Custom Label {{&amp;lt; expand &amp;#34;Custom Label&amp;#34; &amp;#34;...&amp;#34; &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}  Custom Label ...  Markdown content Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat stringit, frustra Saturnius uteroque inter! Oculis non ritibus Telethusa protulit, sed sed aere valvis inhaesuro Pallas animam: qui quid, ignes.</description>
     </item>
     
     <item>
-      <title></title>
-      <link></link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Blink</title>
+      <link>https://dariusnotes.com/docs/esp32/blink/</link>
+      <pubDate>Fri, 31 Jul 2020 18:26:46 -0400</pubDate>
       
-      <guid></guid>
-      <description></description>
+      <guid>https://dariusnotes.com/docs/esp32/blink/</guid>
+      <description>ESP32 Getting Started - Blink  .ging{ text-align: center; width: 100%; }    Background The ESP32 line of modules by Espressif contain a dual-core, 32-bit processor capable of click speeds of up to 240 MHz. The module also includes WiFi, Bluetooth, and hardware accelerators for a variety of peripherals. Programming the ESP32 can be done via the Arduino IDE, Espressif&amp;rsquo;s IDF (Integrated Development Framework), or a third-party toolchain. While the Arduino IDE is convenient, using the ESP-IDF enables the user to take full advantage of the dual-core nature of the ESP32, and of standard libraries that interact with peripherals.</description>
+    </item>
+    
+    <item>
+      <title>Intro</title>
+      <link>https://dariusnotes.com/docs/fpga/intro/</link>
+      <pubDate>Mon, 30 Sep 2019 14:08:13 -0400</pubDate>
+      
+      <guid>https://dariusnotes.com/docs/fpga/intro/</guid>
+      <description>FPGA - (Field Programmable Gate Array) &amp;lt; Insert image here &amp;gt;
+FPGAs, or Field Programmable Gate Arrays, are reconfigurable integrated circuits. They are essentially a sea of gates (In reality, they use &amp;ldquo;logic blocks&amp;rdquo; instead of AND, OR, NOT, etc.) which the user can reconfigure. FPGAs are commonly used to prototype ASICs (Application Specific Integrated Circuits), but offer hobbyists a way to design and use their own custom integrated circuits. FPGAs tend to be slower than ASICs, and are often limited to clock frequencies in the hundreds of megahertz, but can be much faster than programmed general-purpose circuits.</description>
     </item>
     
     <item>
       <title>one</title>
-      <link>https://dariusnotes.com/docs/new/one/</link>
+      <link>https://dariusnotes.com/docs/introduction/one/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://dariusnotes.com/docs/new/one/</guid>
-      <description>Here is a one-page summary of typesetting and shortcodes. This is a new section Hello
- What happens when I tab over 4 times? I guess this? git submodule deinit _site git rm _site git submodule add -b gh-pages git@github.com:your-username/your-repo.git public  Looks similar to this, except tabbed over  Also, I should be able to use cmd prompt text:
-$ Type this in a terminal {{&amp;lt; cmd &amp;quot;$ Type this in a terminal&amp;quot; &amp;gt;}}   -- .</description>
+      <guid>https://dariusnotes.com/docs/introduction/one/</guid>
+      <description>This it a temporary page for my reference while building this site This is a new section Hello
+ What happens when I tab over 4 times? I guess this? git submodule deinit _site git rm _site git submodule add -b gh-pages git@github.com:your-username/your-repo.git public  Looks similar to this, except tabbed over Also, I should be able to use cmd prompt text:
+ .cmd{ background-color: black; color: rgb(53, 216, 31); padding: 0.</description>
     </item>
     
   </channel>
