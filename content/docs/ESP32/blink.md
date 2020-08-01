@@ -8,7 +8,7 @@ draft: true
 {{< gimg "https://drive.google.com/file/d/1yYD6ve40sl5sgrEQ78U8eDRd08tnLRzG/preview" 570 540>}}
 
 ## Background
-The ESP32 line of modules by Espressif contain a dual-core, 32-bit processor capable of click speeds of up to 240 MHz. The module also 
+The ESP32 line of modules by Espressif contain a dual-core, 32-bit processor capable of clock speeds of up to 240 MHz. The module also 
 includes WiFi, Bluetooth, and hardware accelerators for a variety of peripherals. Programming the ESP32 can be done via
 the Arduino IDE, Espressif's IDF (Integrated Development Framework), or a third-party toolchain. While the Arduino IDE is convenient, using the ESP-IDF enables the user to take full advantage of the dual-core nature of the ESP32, and of standard libraries that interact with peripherals. For these reasons, we will be using the ESP-IDF for this guide. Espressif's ESP-IDF documentation can be found {{< link "https://docs.espressif.com/projects/esp-idf/en/latest/esp32/index.html" here >}}, and the documentation for FreeRTOS, the barebones, real-time operating system used by ESP-IDF, can be found 
 {{< link "https://www.freertos.org/RTOS.html" here >}}. The following guide will show you how to make an RGB LED blink periodically, taking advantage of basic FreeRTOS features and the ESP-IDF. To follow along, you will need an ESP32 development board with an RGB LED attached to pins 23, 5, and 0, however the pin assignments are easy to adjust in the code.
